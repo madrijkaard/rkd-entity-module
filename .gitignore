@@ -25,3 +25,11 @@ replay_pid*
 
 # Kotlin Gradle plugin data, see https://kotlinlang.org/docs/whatsnew20.html#new-directory-for-kotlin-data-in-gradle-projects
 .kotlin/
+/.idea/compiler.xml
+/.idea/encodings.xml
+/target/classes/META-INF/entity-module.kotlin_module
+/target/entity-module-0.0.1-SNAPSHOT.jar.original
+/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+/.idea/jarRepositories.xml
+/.idea/kotlinc.xml
+/target/maven-archiver/pom.properties
