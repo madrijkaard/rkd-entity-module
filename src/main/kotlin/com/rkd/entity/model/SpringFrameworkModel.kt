@@ -2,26 +2,30 @@ package com.rkd.entity.model
 
 import com.fasterxml.jackson.annotation.JsonView
 import com.fasterxml.jackson.databind.JsonNode
-import com.rkd.entity.config.ViewConfig
+import com.rkd.entity.component.ViewComponent.Public
 import com.rkd.entity.converter.JsonConverter
-import com.rkd.entity.definition.MessageDefinition.SpringFramework
+import com.rkd.entity.listener.SpringFrameworkListener
 import jakarta.persistence.*
 import jakarta.persistence.CascadeType.ALL
-import jakarta.validation.constraints.NotBlank
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
 
 @Entity
-@Table(name = "spring-framework")
+@Table(name = "spring_framework")
+@EntityListeners(SpringFrameworkListener::class)
 class SpringFrameworkModel : AuditModel() {
-    @field:NotBlank(message = SpringFramework.STRUCTURE_CANNOT_BLANK)
-    @JsonView(ViewConfig.Public::class)
+    @JsonView(Public::class)
     @JdbcTypeCode(SqlTypes.JSON)
     @Convert(converter = JsonConverter::class)
     @Column(name = "structure", columnDefinition = "jsonb", nullable = false)
     var structure: JsonNode? = null
 
-    @JsonView(ViewConfig.Public::class)
+    @JsonView(Public::class)
     @OneToMany(mappedBy = "springFrameworkModel", cascade = [ALL], orphanRemoval = true)
     var projects: List<ProjectModel> = mutableListOf()
+
+    fun isStructureNullOrEmpty(): Boolean {
+        return structure == null || structure!!.isEmpty ||
+                (structure!!.isTextual && structure!!.textValue().isBlank())
+    }
 }

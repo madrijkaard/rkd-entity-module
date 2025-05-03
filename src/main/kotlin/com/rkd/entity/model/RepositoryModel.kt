@@ -1,3 +1,4 @@
+/*
 package com.rkd.entity.model
 
 import com.fasterxml.jackson.annotation.JsonView
@@ -21,4 +22,4 @@ class RepositoryModel : AuditModel() {
     @Convert(converter = JsonConverter::class)
     @Column(name = "structure", columnDefinition = "jsonb", nullable = false)
     var structure: JsonNode? = null
-}
+}*/
