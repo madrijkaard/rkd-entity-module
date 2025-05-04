@@ -1,5 +1,6 @@
 package com.rkd.entity.controller
 
+import com.rkd.entity.definition.UriBaseDefinition.SPRING_FRAMEWORKS
 import com.rkd.entity.manager.CrudManager
 import com.rkd.entity.model.SpringFrameworkModel
 import com.rkd.entity.type.ModelType.SPRING_FRAMEWORK
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/spring_frameworks")
+@RequestMapping(SPRING_FRAMEWORKS)
 class SpringFrameworkController(
     private val crudManager: CrudManager
 ) {

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.rkd.entity.component.ViewComponent.Public
 import com.rkd.entity.converter.JsonConverter
 import com.rkd.entity.definition.MessageDefinition.Dependency
+import com.rkd.entity.listener.DependencyListener
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -13,6 +14,7 @@ import org.hibernate.type.SqlTypes
 
 @Entity
 @Table(name = "dependency")
+@EntityListeners(DependencyListener::class)
 class DependencyModel : AuditModel() {
     @field:NotNull(message = Dependency.STRUCTURE_CANNOT_BLANK)
     @JsonView(Public::class)
@@ -26,4 +28,9 @@ class DependencyModel : AuditModel() {
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
     var projectModel: ProjectModel? = null
+
+    fun isStructureValid(): Boolean {
+        return structure == null || structure!!.isEmpty ||
+                (structure!!.isTextual && structure!!.textValue().isBlank())
+    }
 }

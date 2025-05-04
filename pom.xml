@@ -15,7 +15,7 @@
 	<artifactId>entity-module</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>entity-module</name>
-	<description>Module responsible for managing the platforms business domains.</description>
+	<description>Module responsible for managing the platforms business domains</description>
 
 	<url/>
 

@@ -27,6 +27,7 @@ class ProjectService(
 
     override fun update(name: String, model: ProjectModel): ProjectModel {
         val existing = findByName(name)
+        existing.structure = model.structure
         existing.springFrameworkModel = model.springFrameworkModel
         return projectRepository.save(existing)
     }

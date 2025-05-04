@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.rkd.entity.config.TestConfig
 import com.rkd.entity.definition.MessageDefinition.Audit
-import com.rkd.entity.repository.SpringFrameworkRepository
+import com.rkd.entity.repository.DependencyRepository
 import com.rkd.entity.type.ExceptionType.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(TestConfig::class)
-class SpringFrameworkControllerTest {
+class DependencyControllerTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -31,11 +31,11 @@ class SpringFrameworkControllerTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
-    private lateinit var springFrameworkRepository: SpringFrameworkRepository
+    private lateinit var dependencyRepository: DependencyRepository
 
     @AfterEach
     fun tearDown() {
-        springFrameworkRepository.deleteAll()
+        dependencyRepository.deleteAll()
     }
 
     @Test
@@ -58,19 +58,19 @@ class SpringFrameworkControllerTest {
         )
 
         mockMvc.perform(
-            post("/spring_frameworks")
+            post("/dependencies")
                 .contentType(APPLICATION_JSON)
                 .content(request1)
         ).andExpect(status().isCreated)
 
         mockMvc.perform(
-            post("/spring_frameworks")
+            post("/dependencies")
                 .contentType(APPLICATION_JSON)
                 .content(request2)
         ).andExpect(status().isCreated)
 
         mockMvc.perform(
-            get("/spring_frameworks")
+            get("/dependencies")
         ).andExpect(status().isOk)
             .andExpect {
                 val response = it.response.contentAsString
@@ -102,7 +102,7 @@ class SpringFrameworkControllerTest {
         )
 
         mockMvc.perform(
-            post("/spring_frameworks")
+            post("/dependencies")
                 .contentType(APPLICATION_JSON)
                 .content(request)
         )
@@ -135,7 +135,7 @@ class SpringFrameworkControllerTest {
         )
 
         mockMvc.perform(
-            post("/spring_frameworks")
+            post("/dependencies")
                 .contentType(APPLICATION_JSON)
                 .content(request)
         )
@@ -159,7 +159,7 @@ class SpringFrameworkControllerTest {
         )
 
         mockMvc.perform(
-            post("/spring_frameworks")
+            post("/dependencies")
                 .contentType(APPLICATION_JSON)
                 .content(request)
         )
@@ -183,7 +183,7 @@ class SpringFrameworkControllerTest {
         )
 
         mockMvc.perform(
-            post("/spring_frameworks")
+            post("/dependencies")
                 .contentType(APPLICATION_JSON)
                 .content(request)
         )
@@ -216,13 +216,13 @@ class SpringFrameworkControllerTest {
         )
 
         mockMvc.perform(
-            post("/spring_frameworks")
+            post("/dependencies")
                 .contentType(APPLICATION_JSON)
                 .content(request)
         )
             .andExpect(status().isCreated)
 
-        val entity = springFrameworkRepository.findByName("3.4.3")
+        val entity = dependencyRepository.findByName("3.4.3")
         assertNotNull(entity)
     }
 
@@ -246,16 +246,16 @@ class SpringFrameworkControllerTest {
         )
 
         mockMvc.perform(
-            post("/spring_frameworks")
+            post("/dependencies")
                 .contentType(APPLICATION_JSON)
                 .content(request)
         ).andExpect(status().isCreated)
 
-        val entity = springFrameworkRepository.findByName("3.4.3")
+        val entity = dependencyRepository.findByName("3.4.3")
         assertNotNull(entity)
 
         mockMvc.perform(
-            post("/spring_frameworks")
+            post("/dependencies")
                 .contentType(APPLICATION_JSON)
                 .content(request)
         )
@@ -284,7 +284,7 @@ class SpringFrameworkControllerTest {
         )
 
         mockMvc.perform(
-            post("/spring_frameworks")
+            post("/dependencies")
                 .contentType(APPLICATION_JSON)
                 .content(createRequest)
         ).andExpect(status().isCreated)
@@ -297,12 +297,12 @@ class SpringFrameworkControllerTest {
         )
 
         mockMvc.perform(
-            put("/spring_frameworks/3.4.3")
+            put("/dependencies/3.4.3")
                 .contentType(APPLICATION_JSON)
                 .content(updateRequest)
         ).andExpect(status().isNoContent)
 
-        val updatedEntity = springFrameworkRepository.findByName("3.4.3")
+        val updatedEntity = dependencyRepository.findByName("3.4.3")
         assertNotNull(updatedEntity)
         assertEquals("Updated Spring Framework", updatedEntity!!.structure?.get("description")?.asText())
     }
@@ -317,7 +317,7 @@ class SpringFrameworkControllerTest {
         )
 
         mockMvc.perform(
-            put("/spring_frameworks/not-found")
+            put("/dependencies/not-found")
                 .contentType(APPLICATION_JSON)
                 .content(updateRequest)
         ).andExpect(status().isNotFound)
@@ -333,23 +333,23 @@ class SpringFrameworkControllerTest {
         )
 
         mockMvc.perform(
-            post("/spring_frameworks")
+            post("/dependencies")
                 .contentType(APPLICATION_JSON)
                 .content(request)
         ).andExpect(status().isCreated)
 
         mockMvc.perform(
-            delete("/spring_frameworks/delete-me")
+            delete("/dependencies/delete-me")
         ).andExpect(status().isNoContent)
 
-        val entity = springFrameworkRepository.findByName("delete-me")
+        val entity = dependencyRepository.findByName("delete-me")
         assertEquals(null, entity)
     }
 
     @Test
     fun `should fail to delete a non-existent spring framework model`() {
         mockMvc.perform(
-            delete("/spring_frameworks/does-not-exist")
+            delete("/dependencies/does-not-exist")
         )
             .andExpect(status().isNotFound)
     }

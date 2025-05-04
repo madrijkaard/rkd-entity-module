@@ -1,5 +1,6 @@
 package com.rkd.entity.model
 
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.fasterxml.jackson.annotation.JsonView
 import com.fasterxml.jackson.databind.JsonNode
 import com.rkd.entity.component.ViewComponent.Public
@@ -21,10 +22,11 @@ class SpringFrameworkModel : AuditModel() {
     var structure: JsonNode? = null
 
     @JsonView(Public::class)
+    @JsonManagedReference
     @OneToMany(mappedBy = "springFrameworkModel", cascade = [ALL], orphanRemoval = true)
     var projects: List<ProjectModel> = mutableListOf()
 
-    fun isStructureNullOrEmpty(): Boolean {
+    fun isStructureValid(): Boolean {
         return structure == null || structure!!.isEmpty ||
                 (structure!!.isTextual && structure!!.textValue().isBlank())
     }

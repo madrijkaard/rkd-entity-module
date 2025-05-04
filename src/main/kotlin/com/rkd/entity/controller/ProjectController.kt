@@ -1,5 +1,6 @@
 package com.rkd.entity.controller
 
+import com.rkd.entity.definition.UriBaseDefinition.PROJECTS
 import com.rkd.entity.manager.CrudManager
 import com.rkd.entity.model.ProjectModel
 import com.rkd.entity.type.ModelType.PROJECT
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/projects")
+@RequestMapping(PROJECTS)
 class ProjectController(
     private val crudManager: CrudManager
 ) {
