@@ -1,6 +1,44 @@
-CREATE SEQUENCE IF NOT EXISTS revinfo_seq START 1;
+CREATE SEQUENCE IF NOT EXISTS revinfo_seq START 1 INCREMENT BY 50;
 
 CREATE TABLE IF NOT EXISTS revinfo (
     rev BIGINT PRIMARY KEY DEFAULT nextval('revinfo_seq'),
     revtstmp BIGINT
 );
+
+CREATE TABLE IF NOT EXISTS user_AUD (
+    id BIGINT NOT NULL,
+    REV BIGINT NOT NULL,
+    REVTYPE SMALLINT,
+    REVEND BIGINT,
+    name VARCHAR(255),
+    active BOOLEAN,
+    email VARCHAR(255),
+    hash TEXT,
+    salt TEXT,
+    structure JSONB,
+    PRIMARY KEY (REV, id)
+);
+
+CREATE TABLE IF NOT EXISTS project_AUD (
+    id BIGINT NOT NULL,
+    REV BIGINT NOT NULL,
+    REVTYPE SMALLINT,
+    REVEND BIGINT,
+    name VARCHAR(255),
+    active BOOLEAN,
+    description TEXT,
+    structure JSONB,
+    PRIMARY KEY (REV, id)
+);
+
+ALTER TABLE IF EXISTS user_AUD 
+    ADD CONSTRAINT FK_user_aud_rev FOREIGN KEY (REV) REFERENCES revinfo(rev);
+
+ALTER TABLE IF EXISTS user_AUD 
+    ADD CONSTRAINT FK_user_aud_revend FOREIGN KEY (REVEND) REFERENCES revinfo(rev);
+
+ALTER TABLE IF EXISTS project_AUD 
+    ADD CONSTRAINT FK_project_aud_rev FOREIGN KEY (REV) REFERENCES revinfo(rev);
+
+ALTER TABLE IF EXISTS project_AUD 
+    ADD CONSTRAINT FK_project_aud_revend FOREIGN KEY (REVEND) REFERENCES revinfo(rev);

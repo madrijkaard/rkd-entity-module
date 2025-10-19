@@ -4,7 +4,6 @@ import org.rkd.domain.model.UserModel
 
 interface UserRepositoryOutPort {
     fun findByName(name: String): UserModel?
-    fun insert(user: UserModel)
-    fun update(user: UserModel)
-    fun delete(name: String)
+    fun persist(user: UserModel)
+    fun delete(user: UserModel)
 }

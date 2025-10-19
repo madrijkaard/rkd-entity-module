@@ -60,20 +60,25 @@ class LoginResourceInAdapterTest {
                 .contentType(ContentType.JSON)
                 .body(loginBody)
                 .`when`()
-                .post("/login")
+                .post("/auth/login")
                 .then()
-                .log().ifValidationFails()
                 .extract()
                 .response()
 
         assertEquals(Response.Status.OK.statusCode, loginResponse.statusCode, "Login failed")
 
-        val storedValue = redis.get(name)
+        val responseJson = loginResponse.jsonPath()
+        val token = responseJson.getString("token")
+        val expiresAt = responseJson.getLong("expiresAt")
+
+        val redisKey = "session:$name"
+        val storedValue = redis.get(redisKey)
+
         assertNotNull(storedValue, "Redis must contain the user's session key")
+        assertEquals(token, storedValue, "Stored token must match returned token")
 
         val now = System.currentTimeMillis() / 1000
-        val expiration = storedValue!!.toLong()
-        assertTrue(expiration > now, "Expiration timestamp must be in the future")
+        assertTrue(expiresAt > now, "Expiration timestamp must be in the future")
 
         val user = userRepository.findByName(name)
         assertNotNull(user)

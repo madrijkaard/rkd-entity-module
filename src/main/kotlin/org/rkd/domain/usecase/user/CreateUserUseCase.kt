@@ -19,15 +19,12 @@ class CreateUserUseCase @Inject constructor(
     @Transactional
     fun create(request: CreateUserRequest) {
 
-        userRepository.findByName(request.name)?.let {
-            throw UserAlreadyRegisteredException(MessageDefinition.User.ALREADY_EXISTS)
-        }
+        userRepository.findByName(request.name)?.let { throw UserAlreadyRegisteredException(MessageDefinition.User.ALREADY_EXISTS) }
 
         val (hash, salt) = createHashUseCase.hash(request.password)
-
         val userModel = request.toUserModel(hash, salt)
 
-        userRepository.insert(userModel)
+        userRepository.persist(userModel)
     }
 
     private fun CreateUserRequest.toUserModel(hash: String, salt: String) = UserModel().apply {

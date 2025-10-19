@@ -14,10 +14,10 @@ class UserModel : BaseModel() {
     @Column(name = "email", nullable = false, unique = true)
     var email: String? = null
 
-    @Column(name = "hash", nullable = false)
+    @Column(name = "hash", nullable = false, columnDefinition = "TEXT")
     var hash: String? = null
 
-    @Column(name = "salt", nullable = false)
+    @Column(name = "salt", nullable = false, columnDefinition = "TEXT")
     var salt: String? = null
 
     @Column(columnDefinition = "jsonb")

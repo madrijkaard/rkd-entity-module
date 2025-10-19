@@ -20,6 +20,6 @@ class UpdateUserUseCase @Inject constructor(
         userModel.email = request.email
         userModel.structure = request.structure
 
-        userRepository.update(userModel)
+        userRepository.persist(userModel)
     }
 }

@@ -1,12 +1,12 @@
 services:
   postgres:
     image: postgres:latest
-    container_name: postgres_db
+    container_name: postgres
     restart: always
     environment:
+      POSTGRES_DB: rkd_entity_module
       POSTGRES_USER: madrijkaard
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: rkd-entity-module
+      POSTGRES_PASSWORD: quarkus
     ports:
       - "5432:5432"
     volumes:
@@ -17,12 +17,32 @@ services:
     container_name: pg_admin
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: madrijkaard@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: mad.rijkaard@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: quarkus
     ports:
-      - "8080:80"
+      - "8081:80"
     depends_on:
       - postgres
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    volumes:
+      - redis_data:/data
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redis_insight
+    restart: always
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis
+
 volumes:
   postgres_data:
+  redis_data:

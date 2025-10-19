@@ -25,6 +25,8 @@ object MessageDefinition {
 
     object Login : EntityMessages("Login") {
         const val INVALID_PASSWORD = "Invalid password"
+        const val INVALID_TOKEN = "Invalid token"
+        const val MISSING_TOKEN = "Missing Token"
     }
 
     object Common {

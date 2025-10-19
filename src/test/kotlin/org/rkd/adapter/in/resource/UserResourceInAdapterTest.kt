@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Response
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.rkd.config.ContainerConfig
+import org.rkd.config.JWTConfig
 import org.rkd.definition.MessageDefinition
 import org.rkd.port.out.repository.UserRepositoryOutPort
 import org.hamcrest.Matchers.equalTo
@@ -20,9 +21,10 @@ class UserResourceInAdapterTest {
     @Inject
     lateinit var userRepository: UserRepositoryOutPort
 
+    private val token = JWTConfig.generateToken()
+
     @Test
     fun `should successfully create a user`() {
-
         val name = "john_doe_${System.currentTimeMillis()}"
         val email = "john.doe${System.currentTimeMillis()}@example.com"
 
@@ -33,21 +35,20 @@ class UserResourceInAdapterTest {
             "structure" to """{"role": "tester"}"""
         )
 
-        val response =
-            given()
-                .contentType(ContentType.JSON)
-                .body(requestBody)
-                .`when`()
-                .post("/users")
-                .then()
-                .log().ifValidationFails()
-                .extract()
-                .response()
+        val response = given()
+            .header("Authorization", "Bearer $token")
+            .contentType(ContentType.JSON)
+            .body(requestBody)
+            .`when`()
+            .post("/users")
+            .then()
+            .log().ifValidationFails()
+            .extract()
+            .response()
 
         assertEquals(Response.Status.CREATED.statusCode, response.statusCode)
 
         val user = userRepository.findByName(name)
-
         assertNotNull(user, "Usuário não foi encontrado no banco")
         assertEquals(email, user?.email)
         assertFalse(user?.active ?: true)
@@ -58,7 +59,6 @@ class UserResourceInAdapterTest {
 
     @Test
     fun `should return 400 when trying to create an already registered user`() {
-
         val name = "test"
         val email = "test@example.com"
 
@@ -69,20 +69,16 @@ class UserResourceInAdapterTest {
             "structure" to """{"role": "tester"}"""
         )
 
-        val response =
-            given()
-                .contentType(ContentType.JSON)
-                .body(requestBody)
-                .`when`()
-                .post("/users")
-                .then()
-                .log().ifValidationFails()
-                .extract()
-                .response()
-
-        assertEquals(Response.Status.CREATED.statusCode, response.statusCode)
+        given()
+            .header("Authorization", "Bearer $token")
+            .contentType(ContentType.JSON)
+            .body(requestBody)
+            .post("/users")
+            .then()
+            .statusCode(201)
 
         given()
+            .header("Authorization", "Bearer $token")
             .contentType(ContentType.JSON)
             .body(requestBody)
             .post("/users")
@@ -93,102 +89,74 @@ class UserResourceInAdapterTest {
 
     @Test
     fun `should successfully update a user`() {
-
         val name = "john_doe_${System.currentTimeMillis()}"
         val email = "john.doe${System.currentTimeMillis()}@example.com"
-        val structure = """{"role": "tester"}"""
 
         val requestBody = mapOf(
             "name" to name,
             "email" to email,
             "password" to "password123",
-            "structure" to structure
+            "structure" to """{"role": "tester"}"""
         )
 
-        val createdResponse =
-            given()
-                .contentType(ContentType.JSON)
-                .body(requestBody)
-                .`when`()
-                .post("/users")
-                .then()
-                .log().ifValidationFails()
-                .extract()
-                .response()
+        given()
+            .header("Authorization", "Bearer $token")
+            .contentType(ContentType.JSON)
+            .body(requestBody)
+            .post("/users")
+            .then()
+            .statusCode(201)
 
-        assertEquals(Response.Status.CREATED.statusCode, createdResponse.statusCode)
-
-        val requestBody2 = mapOf(
+        val updateRequest = mapOf(
             "name" to name,
             "email" to email,
             "structure" to """{"role": "developer"}"""
         )
 
-        val updatedResponse =
-            given()
-                .contentType(ContentType.JSON)
-                .body(requestBody2)
-                .`when`()
-                .put("/users")
-                .then()
-                .log().ifValidationFails()
-                .extract()
-                .response()
-
-        assertEquals(Response.Status.NO_CONTENT.statusCode, updatedResponse.statusCode)
+        given()
+            .header("Authorization", "Bearer $token")
+            .contentType(ContentType.JSON)
+            .body(updateRequest)
+            .put("/users")
+            .then()
+            .statusCode(204)
 
         val user = userRepository.findByName(name)
-
         assertNotNull(user, "Usuário não foi encontrado no banco")
         assertEquals("""{"role": "developer"}""", user?.structure)
     }
 
     @Test
     fun `should successfully delete a user`() {
-
         val name = "john_doe_${System.currentTimeMillis()}"
         val email = "john.doe${System.currentTimeMillis()}@example.com"
-        val structure = """{"role": "tester"}"""
 
         val requestBody = mapOf(
             "name" to name,
             "email" to email,
             "password" to "password123",
-            "structure" to structure
+            "structure" to """{"role": "tester"}"""
         )
 
-        val createdResponse =
-            given()
-                .contentType(ContentType.JSON)
-                .body(requestBody)
-                .`when`()
-                .post("/users")
-                .then()
-                .log().ifValidationFails()
-                .extract()
-                .response()
+        given()
+            .header("Authorization", "Bearer $token")
+            .contentType(ContentType.JSON)
+            .body(requestBody)
+            .post("/users")
+            .then()
+            .statusCode(201)
 
-        assertEquals(Response.Status.CREATED.statusCode, createdResponse.statusCode)
+        val deleteRequest = mapOf("name" to name)
 
-        val requestBody2 = mapOf(
-            "name" to name
-        )
-
-        val deletedResponse =
-            given()
-                .contentType(ContentType.JSON)
-                .body(requestBody2)
-                .`when`()
-                .delete("/users")
-                .then()
-                .log().ifValidationFails()
-                .extract()
-                .response()
-
-        assertEquals(Response.Status.OK.statusCode, deletedResponse.statusCode)
+        given()
+            .header("Authorization", "Bearer $token")
+            .contentType(ContentType.JSON)
+            .body(deleteRequest)
+            .delete("/users")
+            .then()
+            .statusCode(200)
 
         val user = userRepository.findByName(name)
-
         assertNull(user, "Usuário foi encontrado no banco")
     }
 }

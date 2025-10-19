@@ -16,6 +16,6 @@ class DeleteUserUseCase @Inject constructor(
         val userModel = userRepository.findByName(request.name)
             ?: throw IllegalArgumentException("Usuário '${request.name}' não encontrado.")
 
-        userRepository.delete(userModel.name!!)
+        userRepository.delete(userModel)
     }
 }

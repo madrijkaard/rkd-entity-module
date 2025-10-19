@@ -7,13 +7,13 @@ import org.testcontainers.containers.PostgreSQLContainer
 class ContainerConfig : QuarkusTestResourceLifecycleManager {
 
     companion object {
-        val postgres: PostgreSQLContainer<*> = PostgreSQLContainer("postgres:16")
+        val postgres: PostgreSQLContainer<*> = PostgreSQLContainer("postgres:latest")
             .withDatabaseName("testdb")
             .withUsername("test")
             .withPassword("test")
             .apply { start() }
 
-        val redis: GenericContainer<*> = GenericContainer("redis:7.2.5")
+        val redis: GenericContainer<*> = GenericContainer("redis:latest")
             .withExposedPorts(6379)
             .apply { start() }
     }
